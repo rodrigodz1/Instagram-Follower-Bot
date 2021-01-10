@@ -51,18 +51,19 @@ class InstagramBot:
 		#print("sua lista tem",len(followers_array),"elementos")
 		while len(followers_array) < number_of_followers:
 			bot.execute_script('arguments[0].scrollTop = arguments[0].scrollHeight', popup)
-			time.sleep(0.4)
+			time.sleep(1)
 
-			followers = bot.find_elements_by_class_name('FPmhX')
-			print("Todos os seguidores: ",followers)
+			followers = bot.find_elements_by_css_selector('.FPmhX.notranslate._0imsa')
+			# print("Todos os seguidores: ",followers)
 			for follower in followers:
 				# follower.txt mostra o seguidor atual
-				print("Seguidores coletados: ", followers_array)
-				if follower not in followers_array:
+				# print("Seguidores coletados: ", followers_array)
+				if follower.text not in followers_array:
 					followers_array.append(follower.text)
 					followers_array = list( dict.fromkeys(followers_array) )
 
 			i+=1
+		print("Seguidores coletados: ", len(followers_array))
 
 		#print("sua nova lista tem", len(followers_array),"elementos")
 
@@ -75,10 +76,11 @@ class InstagramBot:
 
 	def followTheirFollowers(self, number_to_follow):
 		bot = self.bot
-		print("Seguirei",number_to_follow,"perfis.")
+		print("Seguirei",number_to_follow,"perfis de cada perfil coletado!")
 
 		for follower in self.followers:
 			bot.get('https://instagram.com/' + follower)
+
 			time.sleep(5) # Tempo para esperar antes de começar a seguir
 
 			if(len(bot.find_elements_by_xpath("//*[contains(text(), 'This Account is Private')]")) > 0):
@@ -89,6 +91,7 @@ class InstagramBot:
 			bot.find_element_by_xpath('/html/body/div[1]/section/main/div/header/section/ul/li[2]/a').click()
 			
 			time.sleep(3)
+			
 
 			follow = bot.find_elements_by_xpath("//button[contains(text(), 'Follow')]")
 			#following = bot.find_elements_by_xpath("//button[contains(text(), 'Following')]")
@@ -99,23 +102,26 @@ class InstagramBot:
 			i = 1
 
 			for followButton in follow:
-				if(i != 1):
-					if followButton.text == "Following":
-						print("Ops! Você já está seguindo essa pessoa.")
-						continue
-					bot.execute_script("arguments[0].click();", followButton)
-					# print("Tentando seguir o",followButton)
+				print("Pos:", i)
+				# follower = bot.find_element_by_css_selector(".FPmhX.notranslate._0imsa").text
+				if followButton.text == "Following" or followButton.text == "Requested":
+					i+=1
+					continue
+				bot.execute_script("arguments[0].click();", followButton)
+				# print("Tentando seguir o",followButton)
 
 				if(i > number_to_follow):
 					break
 
 				i+=1
+				if i == 8:
+					bot.execute_script('arguments[0].scrollTop = arguments[0].scrollHeight', bot.find_element_by_class_name('isgrP'))
 				time.sleep(10) # Intervalo de tempo à seguir novos perfis
 
 			time.sleep(5) # Intervalo de tempo pra ir pro próximo perfil
 
 
-insta = InstagramBot('rodrigodz0', 'malaca123') # colocar em um txt dps pra n precisar colocar aqui
+insta = InstagramBot('usuario', 'senha') # colocar em um txt dps pra n precisar colocar aqui
 insta.login()
 insta.findMyFollowers(0) # Encontra quantos seguidores o perfil tem
-insta.followTheirFollowers(3) # Define quantos seguidores em comum o script vai seguir
+insta.followTheirFollowers(10) # Define quantos seguidores em comum o script vai seguir
