@@ -37,7 +37,7 @@ class InstagramBot:
 		seg = bot.find_element_by_xpath('/html/body/div[1]/section/main/div/header/section/ul/li[2]/a/span').text
 		if number_of_followers == 0:
 			number_of_followers = int(seg)
-		print("tenho:",int(seg),"seguidores")
+		print("tenho:",number_of_followers,"seguidores")
 
 		bot.find_element_by_xpath('//a[@href="/' + self.username + '/followers/"]').click()
 
@@ -54,8 +54,10 @@ class InstagramBot:
 			time.sleep(0.4)
 
 			followers = bot.find_elements_by_class_name('FPmhX')
-
+			print("Todos os seguidores: ",followers)
 			for follower in followers:
+				# follower.txt mostra o seguidor atual
+				print("Seguidores coletados: ", followers_array)
 				if follower not in followers_array:
 					followers_array.append(follower.text)
 					followers_array = list( dict.fromkeys(followers_array) )
@@ -85,14 +87,22 @@ class InstagramBot:
 				continue
 
 			bot.find_element_by_xpath('/html/body/div[1]/section/main/div/header/section/ul/li[2]/a').click()
+			
 			time.sleep(3)
 
 			follow = bot.find_elements_by_xpath("//button[contains(text(), 'Follow')]")
+			#following = bot.find_elements_by_xpath("//button[contains(text(), 'Following')]")
+			#requested = bot.find_elements_by_xpath("//button[contains(text(), 'Requested')]")
+			#print("Following funciona? ", bot.find_elements_by_xpath("//button[contains(text(), 'Following')]"))
+			#a = bot.find_element_by_css_selector('button')
 
 			i = 1
 
 			for followButton in follow:
 				if(i != 1):
+					if followButton.text == "Following":
+						print("Ops! Você já está seguindo essa pessoa.")
+						continue
 					bot.execute_script("arguments[0].click();", followButton)
 					# print("Tentando seguir o",followButton)
 
@@ -105,7 +115,7 @@ class InstagramBot:
 			time.sleep(5) # Intervalo de tempo pra ir pro próximo perfil
 
 
-insta = InstagramBot('usuario do instagram', 'senha do instagram') # colocar em um txt dps pra n precisar colocar aqui
+insta = InstagramBot('rodrigodz0', 'malaca123') # colocar em um txt dps pra n precisar colocar aqui
 insta.login()
 insta.findMyFollowers(0) # Encontra quantos seguidores o perfil tem
-insta.followTheirFollowers(10) # Define quantos seguidores em comum o script vai seguir
+insta.followTheirFollowers(3) # Define quantos seguidores em comum o script vai seguir
