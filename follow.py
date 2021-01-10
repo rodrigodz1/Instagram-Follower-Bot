@@ -2,6 +2,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import time
+import os, getpass
 
 # Create our class
 class InstagramBot:
@@ -120,8 +121,31 @@ class InstagramBot:
 
 			time.sleep(5) # Intervalo de tempo pra ir pro próximo perfil
 
+#obs: preferencialmente criar arquivo user.txt e colocar email e senha
+#pra nao ficar digitando eles toda hora
 
-insta = InstagramBot('usuario', 'senha') # colocar em um txt dps pra n precisar colocar aqui
+if os.stat("user.txt").st_size == 0:
+	username = input("nome de usuário: ")
+	password = getpass.getpass("senha: ")
+
+	login = open('user.txt','w')
+	login.write(username)
+	login.write("\n")
+	
+	login.write(password)
+	login.write("\n")
+	
+else:
+	login = open('user.txt','r')
+	signin = ["", ""]
+	for i, linha in enumerate(login):
+		linha = linha.rstrip()
+		signin[i] = linha
+	login.close()
+	username = signin[0]
+	password = signin[1]
+
+insta = InstagramBot(username, password)
 insta.login()
 insta.findMyFollowers(0) # Encontra quantos seguidores o perfil tem
 insta.followTheirFollowers(10) # Define quantos seguidores em comum o script vai seguir
