@@ -73,6 +73,7 @@ class InstagramBot:
 
 	def followTheirFollowers(self, number_to_follow):
 		bot = self.bot
+		print("Seguirei",number_to_follow,"perfis.")
 
 		for follower in self.followers:
 			bot.get('https://instagram.com/' + follower)
@@ -86,13 +87,14 @@ class InstagramBot:
 			bot.find_element_by_xpath('/html/body/div[1]/section/main/div/header/section/ul/li[2]/a').click()
 			time.sleep(3)
 
-			follow = bot.find_elements_by_xpath("//button[contains(text(), 'Seguir')]")
+			follow = bot.find_elements_by_xpath("//button[contains(text(), 'Follow')]")
 
 			i = 1
 
-			for follower in follow:
+			for followButton in follow:
 				if(i != 1):
-					bot.execute_script("arguments[0].click();", follower)
+					bot.execute_script("arguments[0].click();", followButton)
+					# print("Tentando seguir o",followButton)
 
 				if(i > number_to_follow):
 					break
@@ -103,7 +105,7 @@ class InstagramBot:
 			time.sleep(5) # Intervalo de tempo pra ir pro próximo perfil
 
 
-insta = InstagramBot('usuário', 'senha')
+insta = InstagramBot('usuario do instagram', 'senha do instagram') # colocar em um txt dps pra n precisar colocar aqui
 insta.login()
 insta.findMyFollowers(0) # Encontra quantos seguidores o perfil tem
-insta.followTheirFollowers(3) # Define quantos seguidores em comum o script vai seguir
+insta.followTheirFollowers(10) # Define quantos seguidores em comum o script vai seguir
